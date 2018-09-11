@@ -22,7 +22,7 @@ kat.save(err => {
 
 let kitKat = new Order({
   products: [kit, kat],
-  totalSale: kit.sellPrice + kat.sellPrice
+  totalSale: 12
 });
 
 kitKat.save(err => {

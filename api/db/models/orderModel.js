@@ -1,11 +1,12 @@
 const mongoose = require("mongoose");
-const productSchema = require("./productModel.js").productSchema;
 
 const orderSchema = new mongoose.Schema({
-  products: {
-    type: [productSchema],
-    default: undefined
-  },
+  products: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product"
+    }
+  ],
   totalSale: {
     type: Number,
     min: 0
