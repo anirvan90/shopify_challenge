@@ -7,7 +7,7 @@ router.get("/orders", (req, res) => {
   Order.find()
     .populate("products")
     .exec((err, data) => {
-      res.status(200).json(data);
+      res.status(201).json(data);
     });
 });
 

@@ -9,16 +9,16 @@ const shopSchema = new mongoose.Schema({
   orders: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Orders"
+      ref: "Order"
     }
   ],
   products: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Products"
+      ref: "Product"
     }
   ]
 });
 
-const Shop = mongoose.model("Shop", shopSchema);
+const Shop = mongoose.model("Shop", shopSchema, "shops");
 module.exports = Shop;
