@@ -2,43 +2,114 @@ const db = require("./index.js");
 const Product = require("./models/productModel");
 const Order = require("./models/orderModel");
 const Shop = require("./models/shopModel");
-let kit = new Product({
-  name: "Test Product",
-  sellPrice: 10.99
+
+const pupshop = new Shop({
+  name: "PupShop",
+  orders: [],
+  products: []
 });
 
-kit.save(err => {
-  if (err) console.error("something went wrong");
+const chew = new Product({
+  name: "Chewable",
+  sellPrice: 15.99,
+  inventory: 12,
+  shop: pupshop
+});
+
+const rope = new Product({
+  name: "Rope",
+  sellPrice: 12.99,
+  inventory: 10,
+  shop: pupshop
+});
+
+const chewchew = new Order({
+  products: [chew, chew],
+  shop: pupshop
+});
+
+const roperope = new Order({
+  products: [rope, rope],
+  shop: pupshop
+});
+
+const chewrope = new Order({
+  products: [chew, rope],
+  shop: pupshop
+});
+
+const katshop = new Shop({
+  name: "KatShop",
+  products: [],
+  orders: []
+});
+
+let kit = new Product({
+  name: "kit",
+  sellPrice: 10.99,
+  inventory: 10,
+  shop: katshop
 });
 
 let kat = new Product({
-  name: "Test Two",
-  sellPrice: 1.0
+  name: "kat",
+  sellPrice: 1.0,
+  inventory: 5,
+  shop: katshop
+});
+
+let kitkat = new Order({
+  products: [kit, kat],
+  totalSale: 12,
+  shop: katshop
+});
+
+let kitkit = new Order({
+  products: [kit, kit],
+  totalSale: 0,
+  shop: katshop
+});
+
+let katkat = new Order({
+  products: [kat, kat],
+  totalSale: 13,
+  shop: katshop
+});
+
+pupshop.save(err => {
+  if (err) console.error("Something went wrong with pupshop");
+});
+
+chew.save(err => {
+  if (err) console.error("Something went wrong with chew");
+});
+
+rope.save(err => {
+  if (err) console.error("Something went wrong with chew");
+});
+
+chewchew.save(err => {
+  if (err) console.error("Something went wrong with chewchew");
+});
+
+chewrope.save(err => {
+  if (err) console.error("Something went wrong with chewrope");
+});
+
+roperope.save(err => {
+  if (err) console.error("Something went wrong with roperope");
+});
+
+katshop.save(err => {
+  if (err) console.error("Something went wrong on katshop");
 });
 
 kat.save(err => {
   if (err) console.error("something went wrong here");
 });
 
-let kitkat = new Order({
-  products: [kit, kat],
-  totalSale: 12
-});
-
-let kitkit = new Order({
-  products: [kit, kit],
-  totalSale: 0
-});
-
-let katkat = new Order({
-  products: [kat, kat],
-  totalSale: 13
-});
-
-const katshop = new Shop({
-  name: "KatShop",
-  products: [kit, kat],
-  orders: [kitkat, katkat, kitkit]
+kit.save(err => {
+  if (err) console.error("something went wrong");
 });
 
 kitkat.save(err => {
@@ -53,6 +124,16 @@ katkat.save(err => {
   if (err) console.error("Something went wrong on katkat");
 });
 
-katshop.save(err => {
-  if (err) console.error("Something went wrong on katshop");
+Shop.updateOne(
+  { name: katshop.name },
+  { products: [kit, kat], orders: [kitkat, kitkit, katkat] }
+).then(data => {
+  console.log("donezo");
+});
+
+Shop.updateOne(
+  { name: pupshop.name },
+  { products: [chew, rope], orders: [chewchew, roperope, chewrope] }
+).then(data => {
+  console.log("chewchew");
 });

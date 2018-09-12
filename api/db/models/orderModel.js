@@ -10,6 +10,18 @@ const orderSchema = new mongoose.Schema({
   totalSale: {
     type: Number,
     min: 0
+  },
+  orderDate: {
+    type: Date,
+    default: Date.now
+  },
+  discount: {
+    type: Number
+  },
+  shop: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Shop",
+    required: true
   }
 });
 
