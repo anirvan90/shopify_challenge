@@ -3,6 +3,7 @@ const Product = require(path.join(__dirname, "../db/models/productModel"));
 const router = require("express").Router();
 
 //Get All Products
+// Admin Only
 router.get("/products", (req, res) => {
   Product.find()
     .then(data => {
@@ -26,14 +27,5 @@ router.get("/products/:productName", (req, res) => {
     }
   });
 });
-
-//Add One Product
-router.post("/products/", (req, res) => {});
-
-//Delete One Product By ID
-router.delete("/products/:productId");
-
-//Update A Product By ID
-router.put("/products/:productId");
 
 module.exports = router;

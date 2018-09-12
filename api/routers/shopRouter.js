@@ -133,4 +133,46 @@ router.delete("/shops/:shopName/products", (req, res) => {
     });
 });
 
+// Get All Orders From One Shop
+// Admin Only - By ShopId
+router.get("/shops/:shopName/orders", (req, res) => {
+  let id = req.body.data.shopId;
+  Shop.findOne({ _id: id })
+    .populate("orders")
+    .exec(function(err, data) {
+      if (err) res.status(404).send(err);
+      res.send(data);
+    });
+});
+
+// Create One Order For One Shop
+// Hacky But It Works
+router.post("/shops/:shopName/orders", (req, res) => {
+  let productIds = req.body.data.productIds;
+  Shop.findOne({ name: req.params.shopName })
+    .then(data => {
+      let order = new Order({
+        products: [...productIds],
+        shop: data._id
+      });
+      order.save(err => {
+        Shop.findOneAndUpdate(
+          { _id: data.id },
+          { $push: { orders: order } },
+          function(err, data) {
+            if (err) res.status(501).send(`Fookage`);
+            res.status(201).send(data);
+          }
+        );
+        if (err) res.status(501).send(`Error`);
+      });
+    })
+    .catch(err => {
+      res.status("Error");
+    });
+});
+// Get One Order For One Shop
+// Edit One Order For One Shop
+// Delete One Order For One Shop
+
 module.exports = router;
