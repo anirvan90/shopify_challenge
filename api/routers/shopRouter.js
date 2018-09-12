@@ -1,5 +1,4 @@
 const path = require("path");
-const mongoose_obj = require("mongoose").Types.ObjectId;
 const Shop = require(path.join(__dirname, "../db/models/shopModel"));
 const Product = require(path.join(__dirname, "../db/models/productModel"));
 const Order = require(path.join(__dirname, "../db/models/orderModel"));
@@ -7,26 +6,12 @@ const router = require("express").Router();
 
 //Get All Shops
 // Only System Admins - This Could Become A Very Expensive Request
+// Essentially Querying the ENTIRE DB!!
 router.get("/shops", (req, res) => {
-  Shop.find()
-    .populate("products")
-    .populate("orders")
-    .exec((err, data) => {
-      if (err) console.log(err);
-      res.status(200).json(data);
-    });
-});
-
-// Get One Shop & Products
-// Everyone (should not return shopID)
-router.get("/shops/:shopName", (req, res) => {
-  let name = req.params.shopName;
-  Shop.findOne({ name: name })
-    .populate("products", "name sellPrice inventory url image_link tags")
-    .exec((err, data) => {
-      if (err) console.error(err);
-      res.status(200).json(data);
-    });
+  Shop.find().exec((err, data) => {
+    if (err) res.status(404).send(`Could Not Find Resources`);
+    res.status(200).json(data);
+  });
 });
 
 //Add One Shop
@@ -42,9 +27,34 @@ router.post("/shops", (req, res) => {
   });
 });
 
-//Delete One Shop
+// Edit Something on Shop eg name
+// Admin Only
+router.put("/shops", (req, res) => {
+  let id = req.body.data.id;
+  let name = req.body.data.name;
+  Shop.findOneAndUpdate({ _id: id }, { name: name })
+    .then(data => {
+      res.status(201).send(`Successfully Changed ${data.name} to ${name}`);
+    })
+    .catch(err => {
+      res.status(404).send(err);
+    });
+});
 
-// Add Product to Shop
+//Delete One Shop
+//Admin Only
+router.delete("/shops", (req, res) => {
+  let id = req.body.data.id;
+  Shop.findOneAndDelete({ _id: id })
+    .then(data => {
+      res.status(202).send(`You Have Deleted ${data.name}`);
+    })
+    .catch(err => {
+      res.status(404).send(`Something Went Wrong!`);
+    });
+});
+
+// Add One Product to Shop
 // Only Shop Admin should be able to add
 router.post("/shops/:shopName/products", (req, res) => {
   let id = req.body.data.id;
@@ -70,21 +80,19 @@ router.post("/shops/:shopName/products", (req, res) => {
   });
 });
 
-//Add Order to Shop
-
-// Get Shop Products
+// Get All Products From One Shop
 // Everyone
 router.get("/shops/:shopName/products", (req, res) => {
   let name = req.params.shopName;
   Shop.findOne({ name: name })
-    .populate("products", "name sellPrice inventory url image_link tags")
+    .populate("products", "tags _id name sellPrice inventory url tags")
     .exec(function(err, shop) {
       if (err) res.status(404).send(`Could Not Find Products for ${name}`);
       res.status(200).json(shop.products);
     });
 });
 
-// Get One Shop Product
+// Get One Product From One Shop
 // Everyone
 router.get("/shops/:shopName/products/:productId", (req, res) => {
   let name = req.params.shopName;
@@ -95,6 +103,33 @@ router.get("/shops/:shopName/products/:productId", (req, res) => {
     })
     .catch(err => {
       res.status(404).send(`Could Not Find A Product With Id ${id} at ${name}`);
+    });
+});
+
+// Edit One Product From One Shop - Ex Name
+// Only For Shop Admin Use
+router.put("/shops/:shopName/products", (req, res) => {
+  let productId = req.body.data.productId;
+  let name = req.body.data.name;
+  Product.findOneAndUpdate({ _id: productId }, { name: name })
+    .then(data => {
+      res.status(201).send(`Successfully Changed ${data.name} to ${name}`);
+    })
+    .catch(err => {
+      res.status(404).send(err);
+    });
+});
+
+// Delete One Product From One Shop
+// Only For Shop Admin Use
+router.delete("/shops/:shopName/products", (req, res) => {
+  let productId = req.body.data.productId;
+  Product.findOneAndDelete({ _id: productId })
+    .then(data => {
+      res.status(202).send(`You Have Deleted ${data.name}`);
+    })
+    .catch(err => {
+      res.status(404).send(`Something Went Wrong!`);
     });
 });
 
