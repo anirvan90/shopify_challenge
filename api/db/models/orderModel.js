@@ -32,11 +32,17 @@ const orderSchema = new mongoose.Schema({
 
 orderSchema.pre("save", function(next) {
   let order = this;
-  order.totalSale = order.aggregate([
-    { $unwind: { path: "$products" } },
-    { $group: { _id: null, $sum: {} } }
-  ]);
-  next();
+  Product.find({ _id: { $in: order.products } }, { sellPrice: 1 })
+    .lean()
+    .exec(function(err, products) {
+      if (err) console.log(err);
+      let totalSale = 0;
+      products.forEach(product => {
+        totalSale += product.sellPrice;
+      });
+      order.totalSale = totalSale;
+      next(err);
+    });
 });
 
 const Order = mongoose.model("Order", orderSchema, "orders");
