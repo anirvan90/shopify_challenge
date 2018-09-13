@@ -136,8 +136,8 @@ router.delete("/shops/:shopName/products", (req, res) => {
 // Get All Orders From One Shop
 // Admin Only - By ShopId
 router.get("/shops/:shopName/orders", (req, res) => {
-  let id = req.body.data.shopId;
-  Shop.findOne({ _id: id })
+  let name = req.params.shopName;
+  Shop.findOne({ name: name })
     .populate("orders")
     .exec(function(err, data) {
       if (err) res.status(404).send(err);
@@ -171,7 +171,22 @@ router.post("/shops/:shopName/orders", (req, res) => {
       res.status("Error");
     });
 });
+
 // Get One Order For One Shop
+// Both User and Admins
+router.get("/shops/:shopName/orders/:orderId", (req, res) => {
+  let id = req.params.orderId;
+  Order.findOne({ _id: id }, "_id orderDate")
+    .populate({
+      path: "products",
+      match: { sellPrice: { $gte: 10 } }
+    })
+    .exec(function(err, shop) {
+      if (err) res.status(404).send(`Could Not Find Products for ${id}`);
+      res.status(200).json(shop);
+    });
+});
+
 // Edit One Order For One Shop
 // Delete One Order For One Shop
 
