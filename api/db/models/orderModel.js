@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Product = require("../models/productModel");
 
 const orderSchema = new mongoose.Schema({
   products: [
@@ -29,7 +30,11 @@ const orderSchema = new mongoose.Schema({
   }
 });
 
-orderSchema.post("save", function() {});
+orderSchema.pre("save", function(next) {
+  let order = this;
+  console.log(order);
+  next();
+});
 
-const Order = mongoose.model("Order", orderSchema);
+const Order = mongoose.model("Order", orderSchema, "orders");
 module.exports = Order;

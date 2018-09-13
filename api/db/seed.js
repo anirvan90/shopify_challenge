@@ -3,13 +3,29 @@ const Product = require("./models/productModel");
 const Order = require("./models/orderModel");
 const Shop = require("./models/shopModel");
 
-// const pupshop = new Shop({
-//   name: "PupShop"
-// });
+const t1 = new Shop({
+  name: "t1"
+});
 
-// pupshop.save(err => {
-//   if (err) console.error(`Error Saving Pupshop`);
-// });
+t1.save(err => {
+  if (err) console.error(`Error Saving t1`);
+});
+
+const t2 = new Shop({
+  name: "t2"
+});
+
+t2.save(err => {
+  if (err) console.error(`Error Saving t2`);
+});
+
+const t3 = new Shop({
+  name: "t3"
+});
+
+t3.save(err => {
+  if (err) console.error(`Error Saving t3`);
+});
 
 // function getShopProducts(shopName) {
 //   return Shop.findOne({ name: shopName })

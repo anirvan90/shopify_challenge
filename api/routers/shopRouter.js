@@ -49,7 +49,7 @@ router.put("/shops", (req, res) => {
 //Admin Only
 router.delete("/shops", (req, res) => {
   let id = req.body.data.id;
-  Shop.findOneAndRemove({ _id: id })
+  Shop.findOneAndDelete({ _id: id })
     .then(data => {
       data.remove();
       res.status(202).send(`You Have Deleted ${data.name}`);
