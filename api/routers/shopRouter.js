@@ -4,6 +4,10 @@ const Product = require(path.join(__dirname, "../db/models/productModel"));
 const Order = require(path.join(__dirname, "../db/models/orderModel"));
 const router = require("express").Router();
 
+// function calculateTotalAndSave(orderId) {
+//   Orders.findOneAndUpdate({ _id: orderId }, { products });
+// }
+
 //Get All Shops
 // Only System Admins - This Could Become A Very Expensive Request
 // Essentially Querying the ENTIRE DB!!
@@ -45,8 +49,9 @@ router.put("/shops", (req, res) => {
 //Admin Only
 router.delete("/shops", (req, res) => {
   let id = req.body.data.id;
-  Shop.findOneAndDelete({ _id: id })
+  Shop.findOneAndRemove({ _id: id })
     .then(data => {
+      data.remove();
       res.status(202).send(`You Have Deleted ${data.name}`);
     })
     .catch(err => {
@@ -57,7 +62,7 @@ router.delete("/shops", (req, res) => {
 // Add One Product to Shop
 // Only Shop Admin should be able to add
 router.post("/shops/:shopName/products", (req, res) => {
-  let id = req.body.data.id;
+  let id = req.body.data.shopId;
   let name = req.body.data.name;
   let sellPrice = req.body.data.sellPrice;
   let newProd = new Product({
@@ -188,6 +193,9 @@ router.get("/shops/:shopName/orders/:orderId", (req, res) => {
 });
 
 // Edit One Order For One Shop
+router.put("shops/:shopName/orders/:orderId");
+
 // Delete One Order For One Shop
+router.delete("shop/:shopName/orders/:orderId");
 
 module.exports = router;

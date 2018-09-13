@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const productSchema = require("./productModel").productSchema;
+const Async = require("async");
 
 const shopSchema = new mongoose.Schema({
   name: {
@@ -18,6 +20,17 @@ const shopSchema = new mongoose.Schema({
       ref: "Product"
     }
   ]
+});
+
+shopSchema.pre("remove", function(next) {
+  let shop = this;
+  shop
+    .model("Product")
+    .remove({
+      _id: { $in: shop.products }
+    })
+    .exec();
+  next;
 });
 
 const Shop = mongoose.model("Shop", shopSchema, "shops");

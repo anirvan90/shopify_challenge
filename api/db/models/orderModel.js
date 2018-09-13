@@ -22,6 +22,10 @@ const orderSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Shop",
     required: true
+  },
+  status: {
+    type: String,
+    enum: ["Open", "Shipped", "Closed"]
   }
 });
 
