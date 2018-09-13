@@ -32,7 +32,10 @@ const orderSchema = new mongoose.Schema({
 
 orderSchema.pre("save", function(next) {
   let order = this;
-  console.log(order);
+  order.totalSale = order.aggregate([
+    { $unwind: { path: "$products" } },
+    { $group: { _id: null, $sum: {} } }
+  ]);
   next();
 });
 
