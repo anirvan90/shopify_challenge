@@ -46,7 +46,6 @@ orderSchema.pre("save", function(next) {
       let totalSale = 0;
       products.forEach(product => {
         totalSale += product.sellPrice;
-        console.log(totalSale);
       });
       order.totalSale = totalSale;
       next(err);

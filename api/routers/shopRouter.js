@@ -3,10 +3,7 @@ const Shop = require(path.join(__dirname, "../db/models/shopModel"));
 const Product = require(path.join(__dirname, "../db/models/productModel"));
 const Order = require(path.join(__dirname, "../db/models/orderModel"));
 const router = require("express").Router();
-
-// function calculateTotalAndSave(orderId) {
-//   Orders.findOneAndUpdate({ _id: orderId }, { products });
-// }
+const Joi = require("joi");
 
 //Get All Shops
 // Only System Admins - This Could Become A Very Expensive Request
@@ -21,7 +18,19 @@ router.get("/shops", (req, res) => {
 //Add One Shop
 //Admin Only - Returns store id (keep safe) and name
 router.post("/shops", (req, res) => {
+  const schema = Joi.string()
+    .alphanum()
+    .min(5)
+    .max(12)
+    .required();
   let name = req.body.data.name;
+  Joi.validate(name, schema, (err, val) => {
+    if (err) {
+      res
+        .status(501)
+        .send("Shop Name Must Be between 3 and 12 characters and alphanumeric");
+    }
+  });
   let shop = new Shop({ name: name });
   shop.save(function(err, data) {
     if (err) res.status(501).send(`Error Creating New Shop ${name}`);
@@ -65,14 +74,18 @@ router.post("/shops/:shopName/products", (req, res) => {
   let id = req.body.data.shopId;
   let name = req.body.data.name;
   let sellPrice = req.body.data.sellPrice;
+  let inventory = req.body.data.inventory;
   let newProd = new Product({
     name: name,
     sellPrice: sellPrice,
-    shop: id
+    shop: id,
+    inventory: inventory
   });
-  newProd.save(err => {
-    if (err) res.status(501).send(`Failed To Save A New Product`);
-    // res.status(201).send("Done");
+  newProd.save((err, data) => {
+    if (err) {
+      console.log(err);
+      res.status(501).send(`Failed To Save A New Product`);
+    }
     Shop.findOneAndUpdate(
       { _id: id },
       { $push: { products: newProd } },
@@ -182,7 +195,7 @@ router.post("/shops/:shopName/orders", (req, res) => {
 // Both User and Admins
 router.get("/shops/:shopName/orders/:orderId", (req, res) => {
   let id = req.params.orderId;
-  Order.findOne({ _id: id }, "_id orderDate")
+  Order.findOne({ _id: id }, "_id orderDate totalSale discount")
     .populate({
       path: "products",
       match: { sellPrice: { $gte: 10 } }
@@ -194,7 +207,14 @@ router.get("/shops/:shopName/orders/:orderId", (req, res) => {
 });
 
 // Edit One Order For One Shop
-router.put("shops/:shopName/orders/:orderId");
+// User should be able to take out products and add products
+// Body should be an array of new product ids
+// Or orders once placed can't be edited --> Longer Term Goal
+// router.put("shops/:shopName/orders/:orderId", (req, res) => {
+//   let id = req.params.orderId;
+//   let productIds = req.body.data.productIds;
+//   Order.findOneAndUpdate({ _id: id });
+// });
 
 // Delete One Order For One Shop
 router.delete("shop/:shopName/orders/:orderId");

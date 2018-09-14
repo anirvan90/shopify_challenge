@@ -14,7 +14,7 @@ const productSchema = new mongoose.Schema({
   },
   inventory: {
     type: Number,
-    required: false
+    default: 0
   },
   url: {
     type: String,
@@ -29,7 +29,16 @@ const productSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Shop",
     required: true
+  },
+  inStock: {
+    type: Boolean
   }
+});
+
+productSchema.pre("save", function(next) {
+  let product = this;
+  product.inStock = product.inventory > 0 ? true : false;
+  next();
 });
 
 const Product = mongoose.model("Product", productSchema, "products");
