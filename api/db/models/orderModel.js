@@ -53,8 +53,21 @@ orderSchema.pre("save", function(next) {
     .model("Shop")
     .update({ _id: order.shop }, { $push: { orders: order } }, (err, data) => {
       if (err) console.log(err);
-      console.log("saved");
     });
+  next();
+});
+
+orderSchema.pre("remove", function(next) {
+  let order = this;
+  order
+    .model("Shop")
+    .update(
+      { _id: order.shop },
+      { $pull: { orders: order._id } },
+      (err, data) => {
+        if (err) console.error(err);
+      }
+    );
   next();
 });
 

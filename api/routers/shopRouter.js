@@ -213,6 +213,18 @@ router.get("/shops/:shopName/orders/:orderId", (req, res) => {
 // });
 
 // Delete One Order For One Shop
-router.delete("shop/:shopName/orders/:orderId");
+// Should not be open to everyone
+router.delete("/shops/:shopName/orders", (req, res) => {
+  let orderId = req.body.data.orderId;
+  console.log(orderId);
+  Order.findOneAndDelete({ _id: orderId })
+    .then(data => {
+      data.remove();
+      res.status(202).json({ message: `You Have Deleted ${data._id}` });
+    })
+    .catch(err => {
+      res.status(404).json({ message: `Something Went Wrong!` });
+    });
+});
 
 module.exports = router;

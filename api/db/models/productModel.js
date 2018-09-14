@@ -63,8 +63,7 @@ productSchema.pre("remove", function(next) {
       { _id: product.shop },
       { $pull: { products: product._id } },
       (err, data) => {
-        if (err) console.log(err);
-        console.log("updated");
+        if (err) console.error(err);
       }
     );
   next();
