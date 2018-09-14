@@ -137,10 +137,10 @@ router.delete("/shops/:shopName/products", (req, res) => {
   Product.findOneAndDelete({ _id: productId })
     .then(data => {
       data.remove();
-      res.status(202).send(`You Have Deleted ${data.name}`);
+      res.status(202).json({ message: `You Have Deleted ${data.name}` });
     })
     .catch(err => {
-      res.status(404).send(`Something Went Wrong!`);
+      res.status(404).json({ message: `Something Went Wrong!` });
     });
 });
 
@@ -167,15 +167,8 @@ router.post("/shops/:shopName/orders", (req, res) => {
         shop: data._id
       });
       order.save(err => {
-        Shop.findOneAndUpdate(
-          { _id: data.id },
-          { $push: { orders: order } },
-          function(err, data) {
-            if (err) res.status(501).send(`Fookage`);
-            res.status(201).send(data);
-          }
-        );
-        if (err) res.status(501).send(`Error`);
+        if (err) res.status(501).json({ message: `Error` });
+        res.status(201).json({ message: `Order Saved` });
       });
     })
     .catch(err => {

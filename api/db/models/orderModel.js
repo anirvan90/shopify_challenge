@@ -52,5 +52,16 @@ orderSchema.pre("save", function(next) {
     });
 });
 
+orderSchema.pre("save", function(next) {
+  let order = this;
+  order
+    .model("Shop")
+    .update({ _id: order.shop }, { $push: { orders: order } }, (err, data) => {
+      if (err) console.log(err);
+      console.log("saved");
+    });
+  next();
+});
+
 const Order = mongoose.model("Order", orderSchema, "orders");
 module.exports = Order;
