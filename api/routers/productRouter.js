@@ -1,31 +1,33 @@
 const path = require("path");
+const {
+  addOneProduct,
+  getOneProduct,
+  getAllProducts,
+  editOneProduct,
+  deleteOneProduct
+} = require(path.join(__dirname, "../controllers/productController"));
 const Product = require(path.join(__dirname, "../db/models/productModel"));
 const router = require("express").Router();
 
-//Get All Products
-// Admin Only
-router.get("/products", (req, res) => {
-  Product.find()
-    .then(data => {
-      res.status(200).json(data);
-    })
-    .catch(err => {
-      console.error("Error Fetching All Products");
-      res.status(404).send(err);
-    });
-});
+// Add One Product to Shop
+// Only Shop Admin should be able to add
+//Protect
+router.post("/shops/:shopName/products", addOneProduct);
 
-//Get One Product
-router.get("/products/:productName", (req, res) => {
-  let name = req.params.productName;
-  Product.findOne({ name: name }).then(data => {
-    if (data) {
-      res.status(200).json(data);
-    } else {
-      console.error(`Error Fetching ${name}`);
-      res.status(404).send({ error: `Could Not Find ${name}` });
-    }
-  });
-});
+// Get All Products From One Shop
+// Everyone
+router.get("/shops/:shopName/products", getAllProducts);
+
+// Get One Product From One Shop
+// Everyone
+router.get("/shops/:shopName/products/:productId", getOneProduct);
+
+// Edit One Product From One Shop - Ex Name
+// Only For Shop Admin Use
+router.put("/shops/:shopName/products", editOneProduct);
+
+// Delete One Product From One Shop
+// Only For Shop Admin Use
+router.delete("/shops/:shopName/products", deleteOneProduct);
 
 module.exports = router;

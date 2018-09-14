@@ -1,28 +1,33 @@
 const path = require("path");
-const Order = require(path.join(__dirname, "../db/models/orderModel"));
 const router = require("express").Router();
+const {
+  getAllOrders,
+  addOneOrder,
+  getOneOrder,
+  deleteOneOrder
+} = require(path.join(__dirname, "../controllers/orderController"));
 
-//Get All Orders
-router.get("/orders", (req, res) => {
-  Order.find()
-    .populate("products")
-    .exec((err, data) => {
-      res.status(201).json(data);
-    });
-});
+// const Order = require(path.join(__dirname, "../db/models/orderModel"));
 
-//Get One Order
-router.get("/orders/:orderID", (req, res) => {
-  let orderID = req.params.orderID;
-  Order.findOne({ _id: orderID })
-    .populate("products")
-    .exec((err, data) => {
-      if (err) res.send("Im fooked");
-      res.status(200).json(data);
-    });
-});
-//Add One Order
-//Update One Order
-//Delete One Order
+// Get All Orders From One Shop
+// Admin Only - By ShopId
+router.get("/shops/:shopName/orders", getAllOrders);
+
+// Create One Order For One Shop
+// Hacky But It Works
+router.post("/shops/:shopName/orders", addOneOrder);
+
+// Get One Order For One Shop
+// Both User and Admins
+router.get("/shops/:shopName/orders/:orderId", getOneOrder);
+
+// Edit One Order For One Shop
+// User should be able to take out products and add products
+// Body should be an array of new product ids
+router.put("/shops/:shopName/orders/:orderId");
+
+// Delete One Order For One Shop
+// Should not be open to everyone
+router.delete("/shops/:shopName/orders", deleteOneOrder);
 
 module.exports = router;
