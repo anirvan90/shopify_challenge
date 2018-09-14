@@ -30,15 +30,9 @@ const orderSchema = new mongoose.Schema({
   }
 });
 
+// Updates Order with Total Sale
 orderSchema.pre("save", function(next) {
   let order = this;
-  if (
-    !this.products ||
-    !Array.isArray(this.products) ||
-    !this.products.length < 1
-  ) {
-    return next();
-  }
   Product.find({}, { sellPrice: 1 })
     .lean()
     .exec(function(err, products) {
@@ -52,6 +46,7 @@ orderSchema.pre("save", function(next) {
     });
 });
 
+// Updates Shop Model with New Order Id
 orderSchema.pre("save", function(next) {
   let order = this;
   order

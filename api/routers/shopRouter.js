@@ -172,7 +172,7 @@ router.post("/shops/:shopName/orders", (req, res) => {
       });
     })
     .catch(err => {
-      res.status("Error");
+      res.status(501).json({ message: `Error Saving` });
     });
 });
 
