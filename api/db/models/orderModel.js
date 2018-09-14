@@ -32,13 +32,21 @@ const orderSchema = new mongoose.Schema({
 
 orderSchema.pre("save", function(next) {
   let order = this;
-  Product.find({ _id: { $in: order.products } }, { sellPrice: 1 })
+  if (
+    !this.products ||
+    !Array.isArray(this.products) ||
+    !this.products.length < 1
+  ) {
+    return next();
+  }
+  Product.find({}, { sellPrice: 1 })
     .lean()
     .exec(function(err, products) {
       if (err) console.log(err);
       let totalSale = 0;
       products.forEach(product => {
         totalSale += product.sellPrice;
+        console.log(totalSale);
       });
       order.totalSale = totalSale;
       next(err);
