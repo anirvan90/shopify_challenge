@@ -26,14 +26,15 @@ router.post("/shops", (req, res) => {
   let name = req.body.data.name;
   Joi.validate(name, schema, (err, val) => {
     if (err) {
-      res
-        .status(501)
-        .send("Shop Name Must Be between 3 and 12 characters and alphanumeric");
+      res.status(501).json({
+        message: `Shop Name Must Be between 3 and 12 characters and alphanumeric`
+      });
     }
   });
   let shop = new Shop({ name: name });
   shop.save(function(err, data) {
-    if (err) res.status(501).send(`Error Creating New Shop ${name}`);
+    if (err)
+      res.status(501).json({ message: `Error Creating New Shop ${name}` });
     Shop.findOne({ name: name }).then(data => {
       res.status(201).json({ id: data._id, name: data.name });
     });
@@ -47,7 +48,9 @@ router.put("/shops", (req, res) => {
   let name = req.body.data.name;
   Shop.findOneAndUpdate({ _id: id }, { name: name })
     .then(data => {
-      res.status(201).send(`Successfully Changed ${data.name} to ${name}`);
+      res
+        .status(201)
+        .json({ message: `Successfully Changed ${data.name} to ${name}` });
     })
     .catch(err => {
       res.status(404).send(err);
@@ -61,10 +64,10 @@ router.delete("/shops", (req, res) => {
   Shop.findOneAndDelete({ _id: id })
     .then(data => {
       data.remove();
-      res.status(202).send(`You Have Deleted ${data.name}`);
+      res.status(202).json({ message: `You Have Deleted ${data.name}` });
     })
     .catch(err => {
-      res.status(404).send(`Something Went Wrong!`);
+      res.status(404).send({ message: `Something Went Wrong!` });
     });
 });
 
@@ -83,8 +86,7 @@ router.post("/shops/:shopName/products", (req, res) => {
   });
   newProd.save((err, data) => {
     if (err) {
-      console.log(err);
-      res.status(501).send(`Failed To Save A New Product`);
+      res.status(501).json({ message: `Failed To Save A New Product` });
     }
     res.status(201).json({ message: `Success` });
   });
@@ -97,7 +99,10 @@ router.get("/shops/:shopName/products", (req, res) => {
   Shop.findOne({ name: name })
     .populate("products", "tags _id name sellPrice inventory url tags")
     .exec(function(err, shop) {
-      if (err) res.status(404).send(`Could Not Find Products for ${name}`);
+      if (err)
+        res
+          .status(404)
+          .json({ message: `Could Not Find Products for ${name}` });
       res.status(200).json(shop.products);
     });
 });
@@ -107,12 +112,14 @@ router.get("/shops/:shopName/products", (req, res) => {
 router.get("/shops/:shopName/products/:productId", (req, res) => {
   let name = req.params.shopName;
   let id = req.params.productId;
-  Product.findOne({ _id: id }, "name sellPrice inventory url tags")
+  Product.findOne({ _id: id }, "name sellPrice inventory url tags inStock")
     .then(data => {
       res.status(200).json(data);
     })
     .catch(err => {
-      res.status(404).send(`Could Not Find A Product With Id ${id} at ${name}`);
+      res
+        .status(404)
+        .json({ message: `Could Not Find A Product With Id ${id} at ${name}` });
     });
 });
 
@@ -123,10 +130,12 @@ router.put("/shops/:shopName/products", (req, res) => {
   let name = req.body.data.name;
   Product.findOneAndUpdate({ _id: productId }, { name: name })
     .then(data => {
-      res.status(201).send(`Successfully Changed ${data.name} to ${name}`);
+      res
+        .status(201)
+        .json({ message: `Successfully Changed ${data.name} to ${name}` });
     })
     .catch(err => {
-      res.status(404).send(err);
+      res.status(404).json({ message: err });
     });
 });
 
@@ -152,7 +161,7 @@ router.get("/shops/:shopName/orders", (req, res) => {
     .populate("orders")
     .exec(function(err, data) {
       if (err) res.status(404).send(err);
-      res.send(data);
+      res.json(data);
     });
 });
 
@@ -186,7 +195,9 @@ router.get("/shops/:shopName/orders/:orderId", (req, res) => {
       match: { sellPrice: { $gte: 10 } }
     })
     .exec(function(err, shop) {
-      if (err) res.status(404).send(`Could Not Find Products for ${id}`);
+      if (err) {
+        res.status(404).json({ message: `Could Not Find Products for ${id}` });
+      }
       res.status(200).json(shop);
     });
 });
