@@ -37,7 +37,21 @@ const productSchema = new mongoose.Schema({
 
 productSchema.pre("save", function(next) {
   let product = this;
+  // Update Product Fields
   product.inStock = product.inventory > 0 ? true : false;
+
+  // Update Shop That Created The Product
+  product
+    .model("Shop")
+    .update(
+      { _id: product.shop },
+      { $push: { products: product } },
+      (err, data) => {
+        if (err) console.log(err);
+        console.log("saved");
+      }
+    );
+
   next();
 });
 

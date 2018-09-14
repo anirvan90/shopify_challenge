@@ -86,16 +86,7 @@ router.post("/shops/:shopName/products", (req, res) => {
       console.log(err);
       res.status(501).send(`Failed To Save A New Product`);
     }
-    Shop.findOneAndUpdate(
-      { _id: id },
-      { $push: { products: newProd } },
-      (err, data) => {
-        if (err) {
-          res.status(501).send("Failed to Save");
-        }
-        res.status(201).send(`Success`);
-      }
-    );
+    res.status(201).json({ message: `Success` });
   });
 });
 
