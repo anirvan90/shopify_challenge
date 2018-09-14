@@ -136,6 +136,7 @@ router.delete("/shops/:shopName/products", (req, res) => {
   let productId = req.body.data.productId;
   Product.findOneAndDelete({ _id: productId })
     .then(data => {
+      data.remove();
       res.status(202).send(`You Have Deleted ${data.name}`);
     })
     .catch(err => {

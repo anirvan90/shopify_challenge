@@ -55,6 +55,21 @@ productSchema.pre("save", function(next) {
   next();
 });
 
+productSchema.pre("remove", function(next) {
+  let product = this;
+  product
+    .model("Shop")
+    .update(
+      { _id: product.shop },
+      { $pull: { products: product._id } },
+      (err, data) => {
+        if (err) console.log(err);
+        console.log("updated");
+      }
+    );
+  next();
+});
+
 const Product = mongoose.model("Product", productSchema, "products");
 
 module.exports.productSchema = productSchema;
