@@ -3,13 +3,13 @@ const Shop = require(path.join(__dirname, "../db/models/shopModel"));
 const Joi = require("joi");
 
 function getAllShops(req, res) {
-  Shop.find({}, "name products").exec((err, data) => {
+  Shop.find({}, "-orders -_id -__v").exec((err, data) => {
     if (err) res.status(404).send(`Could Not Find Resources`);
     res.status(200).json(data);
   });
 }
 
-function addOneShop(req, res) {
+function addOneShop(req, res, next) {
   const schema = Joi.string()
     .alphanum()
     .min(5)

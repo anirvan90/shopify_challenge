@@ -24,7 +24,7 @@ function addOneProduct(req, res) {
 function getOneProduct(req, res) {
   let name = req.params.shopName;
   let id = req.params.productId;
-  Product.findOne({ _id: id }, "name sellPrice inventory url tags inStock")
+  Product.findOne({ _id: id }, "-__v")
     .then(data => {
       res.status(200).json(data);
     })
@@ -38,7 +38,7 @@ function getOneProduct(req, res) {
 function getAllProducts(req, res) {
   let name = req.params.shopName;
   Shop.findOne({ name: name })
-    .populate("products", "tags _id name sellPrice inventory url tags")
+    .populate("products", "-shop")
     .exec(function(err, shop) {
       if (err)
         res
