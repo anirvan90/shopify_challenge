@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const db = require("../index");
 
+// Set up product schema
 const productSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -35,6 +36,7 @@ const productSchema = new mongoose.Schema({
   }
 });
 
+// Hook to update product pre-save
 productSchema.pre("save", function(next) {
   let product = this;
   // Update Product Fields
@@ -55,6 +57,7 @@ productSchema.pre("save", function(next) {
   next();
 });
 
+// Update Shop when products are deleted
 productSchema.pre("remove", function(next) {
   let product = this;
   product

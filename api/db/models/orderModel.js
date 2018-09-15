@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Product = require("../models/productModel");
 
+// Set Up Order Schema
 const orderSchema = new mongoose.Schema({
   products: [
     {
@@ -46,7 +47,7 @@ orderSchema.pre("save", function(next) {
     });
 });
 
-// Updates Shop Model with New Order Id
+// Updates Shop Model with new Order ID
 orderSchema.pre("save", function(next) {
   let order = this;
   order
@@ -57,6 +58,7 @@ orderSchema.pre("save", function(next) {
   next();
 });
 
+// Update Shop Model with deleted order ID
 orderSchema.pre("remove", function(next) {
   let order = this;
   order
