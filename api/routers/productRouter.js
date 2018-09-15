@@ -1,4 +1,7 @@
 const path = require("path");
+const router = require("express").Router();
+
+// Import Controller Functions - Products
 const {
   addOneProduct,
   getOneProduct,
@@ -7,7 +10,6 @@ const {
   deleteOneProduct
 } = require(path.join(__dirname, "../controllers/productController"));
 const Product = require(path.join(__dirname, "../db/models/productModel"));
-const router = require("express").Router();
 
 // Add One Product to Shop
 // Only Shop Admin should be able to add

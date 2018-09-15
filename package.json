@@ -18,7 +18,9 @@
     "helmet": "^3.13.0",
     "joi": "^13.6.0",
     "mongoose": "^5.2.14",
-    "nodemon": "^1.18.4"
+    "nodemon": "^1.18.4",
+    "passport": "^0.4.0",
+    "passport-http-bearer": "^1.0.1"
   },
   "devDependencies": {}
 }

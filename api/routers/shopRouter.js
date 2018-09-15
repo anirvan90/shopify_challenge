@@ -1,23 +1,13 @@
 const router = require("express").Router();
 const path = require("path");
-const Shop = require(path.join(__dirname, "../db/models/shopModel"));
-const Product = require(path.join(__dirname, "../db/models/productModel"));
-const Order = require(path.join(__dirname, "../db/models/orderModel"));
 
+// Import Middleware Controller Functions - Shop
 const {
   getAllShops,
   addOneShop,
   editOneShop,
   deleteOneShop
 } = require(path.join(__dirname, "../controllers/shopController"));
-
-const {
-  addOneProduct,
-  getOneProduct,
-  getAllProducts,
-  editOneProduct,
-  deleteOneProduct
-} = require(path.join(__dirname, "../controllers/productController"));
 
 //Get All Shops
 // This Could Become A Very Expensive Request
