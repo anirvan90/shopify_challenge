@@ -6,6 +6,7 @@ const helmet = require("helmet");
 const productRouter = require(path.join(__dirname, "./routers/productRouter"));
 const orderRouter = require(path.join(__dirname, "./routers/orderRouter"));
 const shopRouter = require(path.join(__dirname, "./routers/shopRouter"));
+const authRouter = require(path.join(__dirname, "./routers/authRouter"));
 
 // Declare Port to serve application
 const PORT = process.env.PORT || 8080;
@@ -18,6 +19,7 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 // Routers - Authentication Logic
+app.use("/api", authRouter);
 
 // Routers - API Logic
 app.use("/api", productRouter);
