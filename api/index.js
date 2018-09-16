@@ -19,12 +19,12 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 // Routers - Authentication Logic
-app.use("/api", authRouter);
+app.use("/api/v1", authRouter);
 
 // Routers - API Logic
-app.use("/api", productRouter);
-app.use("/api", orderRouter);
-app.use("/api", shopRouter);
+app.use("/api/v1", productRouter);
+app.use("/api/v1", orderRouter);
+app.use("/api/v1", shopRouter);
 
 // Redirect Unimplmented Routes
 app.use((req, res) => {
