@@ -1,7 +1,8 @@
-const db = require("./index.js");
-const Product = require("./models/productModel");
-const Order = require("./models/orderModel");
-const Shop = require("./models/shopModel");
+const path = require("path");
+const db = require(path.join(__dirname, "./api/db/index"));
+const Product = require(path.join(__dirname, "./api/db/models/productModel"));
+const Order = require(path.join(__dirname, "./api/db/models/orderModel"));
+const Shop = require(path.join(__dirname, "./api/db/models/shopModel"));
 
 const t1 = new Shop({
   name: "t1"
