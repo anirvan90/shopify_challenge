@@ -10,19 +10,8 @@ function getAllShops(req, res) {
 }
 
 function addOneShop(req, res, next) {
-  const schema = Joi.string()
-    .alphanum()
-    .min(5)
-    .max(12)
-    .required();
-  let name = req.body.data.name;
-  Joi.validate(name, schema, (err, val) => {
-    if (err) {
-      res.status(501).json({
-        message: `Shop Name Must Be between 3 and 12 characters and alphanumeric`
-      });
-    }
-  });
+  let { name } = req.body.data;
+  validateName(name, res);
   let shop = new Shop({ name: name });
   shop.save(function(err, data) {
     if (err)
@@ -34,8 +23,8 @@ function addOneShop(req, res, next) {
 }
 
 function editOneShop(req, res) {
-  let id = req.body.data.id;
-  let name = req.body.data.name;
+  let { name, id } = req.body.data;
+  validateName(name, res);
   Shop.findOneAndUpdate({ _id: id }, { name: name })
     .then(data => {
       res
@@ -48,7 +37,7 @@ function editOneShop(req, res) {
 }
 
 function deleteOneShop(req, res) {
-  let id = req.body.data.id;
+  let { id } = req.body.data;
   Shop.findOneAndDelete({ _id: id })
     .then(data => {
       data.remove();
@@ -57,5 +46,21 @@ function deleteOneShop(req, res) {
     .catch(err => {
       res.status(404).send({ message: `Something Went Wrong!` });
     });
+}
+
+// Shop Name Validation Helper Function
+function validateName(name, res) {
+  const schema = Joi.string()
+    .alphanum()
+    .min(5)
+    .max(12)
+    .required();
+  return Joi.validate(name, schema, (err, val) => {
+    if (err) {
+      res.status(501).json({
+        message: `Shop Name Must Be between 3 and 12 characters and alphanumeric`
+      });
+    }
+  });
 }
 module.exports = { getAllShops, addOneShop, editOneShop, deleteOneShop };
