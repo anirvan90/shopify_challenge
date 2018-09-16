@@ -11,6 +11,7 @@ const {
 
 //Get All Shops
 // This Could Become A Very Expensive Request
+// Filtering shops could help or caching
 router.get("/shops", getAllShops);
 
 //Add One Shop

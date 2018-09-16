@@ -2,6 +2,7 @@ const path = require("path");
 const Shop = require(path.join(__dirname, "../db/models/shopModel"));
 const Joi = require("joi");
 
+// Get All Shops - Params None - Return json all shops
 function getAllShops(req, res) {
   Shop.find({}, "-orders -__v").exec((err, data) => {
     if (err) res.status(404).send(`Could Not Find Resources`);
@@ -9,6 +10,7 @@ function getAllShops(req, res) {
   });
 }
 
+// Add One Shop - Param Name - Return Success/Fail Message
 function addOneShop(req, res, next) {
   let { name } = req.body.data;
   validateName(name, res);
@@ -22,6 +24,7 @@ function addOneShop(req, res, next) {
   });
 }
 
+// Edit Name of Shop - Param Name & ID - Return Success/Fail Message
 function editOneShop(req, res) {
   let { name, id } = req.body.data;
   validateName(name, res);
@@ -36,6 +39,7 @@ function editOneShop(req, res) {
     });
 }
 
+// Delete One Shop - Param Id - Return Success/Fail Message
 function deleteOneShop(req, res) {
   let { id } = req.body.data;
   Shop.findOneAndDelete({ _id: id })

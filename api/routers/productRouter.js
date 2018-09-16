@@ -17,11 +17,11 @@ const Product = require(path.join(__dirname, "../db/models/productModel"));
 router.post("/shops/:shopName/products", addOneProduct);
 
 // Get All Products From One Shop
-// Everyone
+// Everyone - These queries should be cached [think redis]
 router.get("/shops/:shopName/products", getAllProducts);
 
 // Get One Product From One Shop
-// Everyone
+// Everyone - Cached dependent on number of times this query comes in
 router.get("/shops/:shopName/products/:productId", getOneProduct);
 
 // Edit One Product From One Shop - Ex Name
