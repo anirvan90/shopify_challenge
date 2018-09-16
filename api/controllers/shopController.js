@@ -3,7 +3,7 @@ const Shop = require(path.join(__dirname, "../db/models/shopModel"));
 const Joi = require("joi");
 
 function getAllShops(req, res) {
-  Shop.find({}, "-orders -_id -__v").exec((err, data) => {
+  Shop.find({}, "-orders -__v").exec((err, data) => {
     if (err) res.status(404).send(`Could Not Find Resources`);
     res.status(200).json(data);
   });

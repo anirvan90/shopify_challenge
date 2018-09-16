@@ -4,8 +4,8 @@ const Order = require(path.join(__dirname, "../db/models/orderModel"));
 
 function getAllOrders(req, res) {
   let name = req.params.shopName;
-  Shop.findOne({ name: name })
-    .populate("orders")
+  Shop.findOne({ name: name }, "-__v")
+    .populate("orders", "-__v")
     .exec(function(err, data) {
       if (err) res.status(404).send(err);
       res.json(data);

@@ -34,16 +34,21 @@ const orderSchema = new mongoose.Schema({
 // Updates Order with Total Sale
 orderSchema.pre("save", function(next) {
   let order = this;
-  Product.find({}, { sellPrice: 1 })
-    .lean()
-    .exec(function(err, products) {
-      if (err) console.log(err);
-      let totalSale = 0;
-      products.forEach(product => {
+  let temp = order.products.map(product => {
+    return { _id: mongoose.Types.ObjectId(product) };
+  });
+  let totalSale = 0;
+  let promises = Product.find({ _id: { $in: temp } }).exec();
+  promises
+    .then(data => {
+      data.forEach(product => {
         totalSale += product.sellPrice;
       });
       order.totalSale = totalSale;
-      next(err);
+      next();
+    })
+    .catch(err => {
+      console.error(err);
     });
 });
 
