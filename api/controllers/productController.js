@@ -1,12 +1,18 @@
 const path = require("path");
 const Product = require(path.join(__dirname, "../db/models/productModel"));
 const Shop = require(path.join(__dirname, "../db/models/shopModel"));
+const { validateUser, isShopOwner } = require(path.join(
+  __dirname,
+  "../controllers/shopController"
+));
 
-function addOneProduct(req, res) {
-  let id = req.body.data.shopId;
-  let name = req.body.data.name;
-  let sellPrice = req.body.data.sellPrice;
-  let inventory = req.body.data.inventory;
+async function addOneProduct(req, res) {
+  let apiKey = req.headers["x-api-key"];
+  let { id, name, sellPrice, inventory } = req.body.data;
+  if ((await isShopOwner(apiKey, id)) === false) {
+    res.status(401).json({ message: `Unauthorized Request` });
+    return;
+  }
   let newProd = new Product({
     name: name,
     sellPrice: sellPrice,

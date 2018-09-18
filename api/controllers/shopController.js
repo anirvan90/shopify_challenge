@@ -38,8 +38,8 @@ async function addOneShop(req, res) {
 // Edit Name of Shop - Param Name & ID - Return Success/Fail Message
 async function editOneShop(req, res) {
   let apiKey = req.headers["x-api-key"];
-  let { oldName, newName } = req.body.data;
-  if ((await isShopOwner(apiKey, oldName)) === false) {
+  let { oldName, newName, id } = req.body.data;
+  if ((await isShopOwner(apiKey, id)) === false) {
     res.status(401).json({ message: `Unauthorized Request` });
     return;
   }
@@ -58,7 +58,7 @@ async function editOneShop(req, res) {
 async function deleteOneShop(req, res) {
   let apiKey = req.headers["x-api-key"];
   let { id, name } = req.body.data;
-  if ((await isShopOwner(apiKey, name)) === false) {
+  if ((await isShopOwner(apiKey, id)) === false) {
     res.status(401).json({ message: `Unauthorized Request` });
     return;
   }
@@ -116,9 +116,9 @@ async function validateUser(apiKey) {
   return false;
 }
 
-async function isShopOwner(apiKey, name) {
+async function isShopOwner(apiKey, id) {
   if ((await validateUser(apiKey)) === true) {
-    let shop = await Shop.findOne({ name: name });
+    let shop = await Shop.findOne({ _id: id });
     if (shop) {
       if (shop.ownerKey === apiKey) {
         return true;
@@ -128,4 +128,11 @@ async function isShopOwner(apiKey, name) {
   return false;
 }
 
-module.exports = { getAllShops, addOneShop, editOneShop, deleteOneShop };
+module.exports = {
+  getAllShops,
+  addOneShop,
+  editOneShop,
+  deleteOneShop,
+  isShopOwner,
+  validateUser
+};
