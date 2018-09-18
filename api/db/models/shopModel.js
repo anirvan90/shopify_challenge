@@ -17,7 +17,8 @@ const shopSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: "Product"
     }
-  ]
+  ],
+  ownerKey: String
 });
 
 shopSchema.pre("remove", function(next) {

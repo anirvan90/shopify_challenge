@@ -1,10 +1,8 @@
 const path = require("path");
 const User = require(path.join(__dirname, "../db/models/userModel"));
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
-function login(req, res) {
-  res.send("hi from login");
-}
 function register(req, res) {
   const { username, password } = req.body.data;
   User.findOne({ username }).then(user => {
@@ -13,12 +11,17 @@ function register(req, res) {
         if (err) res.send("Error");
         let newUser = new User({
           username: username,
-          password: hashed
+          password: hashed,
+          apiKey: bcrypt.hashSync(process.env.AUTH_SECRET, 10)
         });
         newUser
           .save()
           .then(data => {
-            res.status(201).json({ token: "hi", username: username });
+            res.status(201).json({
+              apiKey: data.apiKey,
+              username: data.username,
+              message: `KEEP YOUR KEYS TO YOUR CHEST. SEND THEM WITH IN YOUR REQUEST HEADERS`
+            });
           })
           .catch(err => {
             res.status(501).json({ message: "error in saving" });
@@ -33,4 +36,4 @@ function checkAuth(req, res) {
   res.send("hi from checkAuth");
 }
 
-module.exports = { login, register, checkAuth };
+module.exports = { register, checkAuth };
