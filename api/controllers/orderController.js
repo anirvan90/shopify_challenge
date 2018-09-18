@@ -1,35 +1,49 @@
 const path = require("path");
 const Shop = require(path.join(__dirname, "../db/models/shopModel"));
 const Order = require(path.join(__dirname, "../db/models/orderModel"));
+const { isShopOwner } = require(path.join(
+  __dirname,
+  "../controllers/shopController"
+));
 
-function getAllOrders(req, res) {
-  let name = req.params.shopName;
-  Shop.findOne({ name: name }, "-__v")
-    .populate("orders", "-__v")
-    .exec(function(err, data) {
-      if (err) res.status(404).send(err);
-      res.json(data);
-    });
+// GET: Get all orders - Protected
+async function getAllOrders(req, res) {
+  // let name = req.params.shopName;
+  let apiKey = req.headers["x-api-key"];
+  let shopId = req.body.shopId;
+  if ((await isShopOwner(apiKey, shopId)) === false) {
+    res.status(401).json({ message: `Unauthorized Request` });
+    return;
+  }
+  try {
+    let orders = await Shop.findOne({ _id: shopId }).populate("orders");
+    if (orders === null) {
+      res.status(404).json({ message: `No Orders To Show` });
+    }
+    res.status(200).json(orders);
+  } catch (error) {
+    res.status(404).json({ message: `No Orders To Show`, error: error });
+  }
 }
 
-function addOneOrder(req, res) {
+// POST: Add a new order
+async function addOneOrder(req, res) {
   let productIds = req.body.data.productIds;
-  Shop.findOne({ name: req.params.shopName })
-    .then(data => {
-      let order = new Order({
-        products: [...productIds],
-        shop: data._id
-      });
-      order.save(err => {
-        if (err) res.status(501).json({ message: `Error` });
-        res.status(201).json({ message: `Order Saved` });
-      });
-    })
-    .catch(err => {
-      res.status(501).json({ message: `Error Saving` });
-    });
+  let name = req.params.shopName;
+  let shop = await Shop.findOne({ name: name });
+  let order = new Order({
+    products: [...productIds],
+    shop: shop._id
+  });
+  try {
+    let savedOrder = await order.save();
+    res.status(201).json({ message: `Order Saved`, order: savedOrder });
+  } catch (error) {
+    res.status(401).json({ message: `Error Saving Order` });
+  }
 }
 
+// GET: Get one order with order id
 function getOneOrder(req, res) {
   let id = req.params.orderId;
   Order.findOne({ _id: id }, "_id orderDate totalSale discount")
@@ -45,6 +59,7 @@ function getOneOrder(req, res) {
     });
 }
 
+// DELETE: Delete one order - Protected
 function deleteOneOrder(req, res) {
   let orderId = req.body.data.orderId;
   Order.findOneAndDelete({ _id: orderId })

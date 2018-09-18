@@ -34,6 +34,14 @@ const orderSchema = new mongoose.Schema({
 // Updates Order with Total Sale
 orderSchema.pre("save", function(next) {
   let order = this;
+  let counts = {};
+  order.products.map((prod, index) => {
+    if (counts[prod]) {
+      counts[prod] += 1;
+    } else {
+      counts[prod] = 1;
+    }
+  });
   let temp = order.products.map(product => {
     return { _id: mongoose.Types.ObjectId(product) };
   });
@@ -42,7 +50,7 @@ orderSchema.pre("save", function(next) {
   promises
     .then(data => {
       data.forEach(product => {
-        totalSale += product.sellPrice;
+        totalSale += product.sellPrice * counts[product._id];
       });
       order.totalSale = totalSale;
       next();

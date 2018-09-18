@@ -56,6 +56,9 @@ async function getAllProducts(req, res) {
   let name = req.params.shopName;
   try {
     let shop = await Shop.findOne({ name: name }).populate("products");
+    if (shop === null) {
+      res.status(200).json({ message: `No Products To Show` });
+    }
     res.status(200).json(shop.products);
   } catch (error) {
     res
