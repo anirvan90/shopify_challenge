@@ -47,17 +47,16 @@ function getOneProduct(req, res) {
 }
 
 // GET: Get All Products
-function getAllProducts(req, res) {
+async function getAllProducts(req, res) {
   let name = req.params.shopName;
-  Shop.findOne({ name: name })
-    .populate("products", "-shop")
-    .exec(function(err, shop) {
-      if (err)
-        res
-          .status(404)
-          .json({ message: `Could Not Find Products for ${name}` });
-      res.status(200).json(shop.products);
-    });
+  try {
+    let shop = await Shop.findOne({ name: name }).populate("products");
+    res.status(200).json(shop.products);
+  } catch (error) {
+    res
+      .status(404)
+      .json({ message: `Could Not Find Products for ${name}`, error: error });
+  }
 }
 
 // PUT: Edit One Product
@@ -73,33 +72,30 @@ async function editOneProduct(req, res) {
       { _id: productId },
       { name: name }
     );
-    res.status(201).json({ message: `Successfully Updated Product` });
+    res.status(201).json({
+      message: `Successfully Updated Product`,
+      product: updatedProduct
+    });
   } catch (error) {
     res.status(404).json({ message: error });
   }
-
-  // Product.findOneAndUpdate({ _id: productId }, { name: name })
-  //   .then(data => {
-  //     res
-  //       .status(201)
-  //       .json({ message: `Successfully Changed ${data.name} to ${name}` });
-  //   })
-  //   .catch(err => {
-  //     res.status(404).json({ message: err });
-  //   });
 }
 
 // DELETE: Delete One Product
-function deleteOneProduct(req, res) {
-  let productId = req.body.data.productId;
-  Product.findOneAndDelete({ _id: productId })
-    .then(data => {
-      data.remove();
-      res.status(202).json({ message: `You Have Deleted ${data.name}` });
-    })
-    .catch(err => {
-      res.status(404).json({ message: `Something Went Wrong!` });
-    });
+async function deleteOneProduct(req, res) {
+  let { productId, shopId } = req.body.data;
+  let apiKey = req.headers["x-api-key"];
+  if ((await isShopOwner(apiKey, shopId)) === false) {
+    res.status(401).json({ message: `Unauthorized Request` });
+    return;
+  }
+  try {
+    let prodToDelete = await Product.findOneAndDelete({ _id: productId });
+    prodToDelete.remove();
+    res.status(202).json({ message: `You Have Deleted ${prodToDelete.name}` });
+  } catch (error) {
+    res.status(404).json({ message: `Something Went Wrong!` });
+  }
 }
 
 module.exports = {
