@@ -1,7 +1,6 @@
 const path = require("path");
 const User = require(path.join(__dirname, "../db/models/userModel"));
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 
 function register(req, res) {
   const { username, password } = req.body.data;

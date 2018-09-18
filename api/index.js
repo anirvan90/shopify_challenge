@@ -1,7 +1,6 @@
 const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
-const cookieParser = require("cookie-parser");
 const helmet = require("helmet");
 const productRouter = require(path.join(__dirname, "./routers/productRouter"));
 const orderRouter = require(path.join(__dirname, "./routers/orderRouter"));
@@ -17,7 +16,6 @@ const app = express();
 // MIDDLEWARE
 app.use(helmet());
 app.use(bodyParser.json());
-app.use(cookieParser());
 
 // Routers - Authentication Logic
 app.use("/api/v1", authRouter);
