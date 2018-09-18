@@ -116,9 +116,15 @@ async function validateUser(apiKey) {
   return false;
 }
 
-async function isShopOwner(apiKey, id) {
+async function isShopOwner(apiKey, id, name) {
+  let searchObj = {};
+  if (id === null) {
+    searchObj["name"] = name;
+  } else {
+    searchObj["_id"] = id;
+  }
   if ((await validateUser(apiKey)) === true) {
-    let shop = await Shop.findOne({ _id: id });
+    let shop = await Shop.findOne(searchObj);
     if (shop) {
       if (shop.ownerKey === apiKey) {
         return true;

@@ -8,19 +8,20 @@ const { isShopOwner } = require(path.join(
 
 // GET: Get all orders - Protected
 async function getAllOrders(req, res) {
-  // let name = req.params.shopName;
+  let name = req.params.shopName;
   let apiKey = req.headers["x-api-key"];
-  let shopId = req.body.shopId;
-  if ((await isShopOwner(apiKey, shopId)) === false) {
+  // let shopId = req.body.shopId;
+  if ((await isShopOwner(apiKey, null, name)) === false) {
     res.status(401).json({ message: `Unauthorized Request` });
     return;
   }
   try {
-    let orders = await Shop.findOne({ _id: shopId }).populate("orders");
+    let orders = await Shop.findOne({ name: name }).populate("orders");
     if (orders === null) {
       res.status(404).json({ message: `No Orders To Show` });
+    } else {
+      res.status(200).json(orders);
     }
-    res.status(200).json(orders);
   } catch (error) {
     res.status(404).json({ message: `No Orders To Show`, error: error });
   }
@@ -44,19 +45,17 @@ async function addOneOrder(req, res) {
 }
 
 // GET: Get one order with order id
-function getOneOrder(req, res) {
+async function getOneOrder(req, res) {
   let id = req.params.orderId;
-  Order.findOne({ _id: id }, "_id orderDate totalSale discount")
-    .populate({
-      path: "products",
-      match: { sellPrice: { $gte: 10 } }
-    })
-    .exec(function(err, shop) {
-      if (err) {
-        res.status(404).json({ message: `Could Not Find Products for ${id}` });
-      }
-      res.status(200).json(shop);
-    });
+  let order = await Order.findOne(
+    { _id: id },
+    "_id orderDate totalSale discount"
+  ).populate("products", "name _id sellPrice");
+  if (order === null) {
+    res.status(404).json({ message: `Could Not Find Products for ${id}` });
+  } else {
+    res.status(200).json(order);
+  }
 }
 
 // DELETE: Delete one order - Protected

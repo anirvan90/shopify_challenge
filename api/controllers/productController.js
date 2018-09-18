@@ -38,9 +38,8 @@ async function getOneProduct(req, res) {
   try {
     let product = await Product.findOne({ _id: id });
     if (product === null) {
-      {
-        res.status(200).json({ message: `No Product Found!` });
-      }
+      res.status(200).json({ message: `No Product Found!` });
+    } else {
       res.status(200).json(product);
     }
   } catch (error) {
@@ -58,8 +57,9 @@ async function getAllProducts(req, res) {
     let shop = await Shop.findOne({ name: name }).populate("products");
     if (shop === null) {
       res.status(200).json({ message: `No Products To Show` });
+    } else {
+      res.status(200).json(shop.products);
     }
-    res.status(200).json(shop.products);
   } catch (error) {
     res
       .status(404)
