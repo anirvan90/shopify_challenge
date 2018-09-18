@@ -10,7 +10,6 @@ const { isShopOwner } = require(path.join(
 async function getAllOrders(req, res) {
   let name = req.params.shopName;
   let apiKey = req.headers["x-api-key"];
-  // let shopId = req.body.shopId;
   if ((await isShopOwner(apiKey, null, name)) === false) {
     res.status(401).json({ message: `Unauthorized Request` });
     return;
@@ -52,23 +51,30 @@ async function getOneOrder(req, res) {
     "_id orderDate totalSale discount"
   ).populate("products", "name _id sellPrice");
   if (order === null) {
-    res.status(404).json({ message: `Could Not Find Products for ${id}` });
+    res.status(404).json({ message: `Could Not Find Order with id: ${id}` });
   } else {
     res.status(200).json(order);
   }
 }
 
 // DELETE: Delete one order - Protected
-function deleteOneOrder(req, res) {
+async function deleteOneOrder(req, res) {
   let orderId = req.body.data.orderId;
-  Order.findOneAndDelete({ _id: orderId })
-    .then(data => {
-      data.remove();
-      res.status(202).json({ message: `You Have Deleted ${data._id}` });
-    })
-    .catch(err => {
-      res.status(404).json({ message: `Something Went Wrong!` });
+  let apiKey = req.headers["x-api-key"];
+  let shopName = req.params.shopName;
+  if ((await isShopOwner(apiKey, null, shopName)) === false) {
+    res.status(401).json({ message: `Unauthorized Request` });
+    return;
+  }
+  let order = await Order.findOneAndDelete({ _id: orderId });
+  if (order === null) {
+    res.status(404).json({
+      message: `Something Went Wrong! ${orderId} does not exist or has been deleted`
     });
+  } else {
+    order.remove();
+    res.status(202).json({ message: `You Have Deleted ${order._id}` });
+  }
 }
 module.exports = {
   getAllOrders,
