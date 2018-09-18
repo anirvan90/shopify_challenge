@@ -59,7 +59,7 @@ async function getAllProducts(req, res) {
   }
 }
 
-// PUT: Edit One Product
+// PUT: Edit One Product - Protected
 async function editOneProduct(req, res) {
   let { productId, shopId, name } = req.body.data;
   let apiKey = req.headers["x-api-key"];
@@ -81,7 +81,7 @@ async function editOneProduct(req, res) {
   }
 }
 
-// DELETE: Delete One Product
+// DELETE: Delete One Product - Protected
 async function deleteOneProduct(req, res) {
   let { productId, shopId } = req.body.data;
   let apiKey = req.headers["x-api-key"];
