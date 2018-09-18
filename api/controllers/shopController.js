@@ -1,12 +1,6 @@
 const path = require("path");
 const Shop = require(path.join(__dirname, "../db/models/shopModel"));
-const User = require(path.join(__dirname, "../db/models/userModel"));
 const Joi = require("joi");
-const bcrypt = require("bcryptjs");
-const { isShopOwner } = require(path.join(
-  __dirname,
-  "../controllers/authController"
-));
 
 // Get All Shops - Params None - Return json all shops
 async function getAllShops(req, res) {

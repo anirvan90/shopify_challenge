@@ -9,11 +9,6 @@ const { isShopOwner } = require(path.join(
 // GET: Get all orders - Protected
 async function getAllOrders(req, res) {
   let name = req.params.shopName;
-  let apiKey = req.headers["x-api-key"];
-  // if ((await isShopOwner(apiKey, null, name)) === false) {
-  //   res.status(401).json({ message: `Unauthorized Request` });
-  //   return;
-  // }
   try {
     let orders = await Shop.findOne({ name: name }).populate("orders");
     if (orders === null) {
@@ -60,12 +55,6 @@ async function getOneOrder(req, res) {
 // DELETE: Delete one order - Protected
 async function deleteOneOrder(req, res) {
   let orderId = req.body.data.orderId;
-  // let apiKey = req.headers["x-api-key"];
-  // let shopName = req.params.shopName;
-  // if ((await isShopOwner(apiKey, null, shopName)) === false) {
-  //   res.status(401).json({ message: `Unauthorized Request` });
-  //   return;
-  // }
   let order = await Order.findOneAndDelete({ _id: orderId });
   if (order === null) {
     res.status(404).json({
