@@ -32,18 +32,23 @@ async function addOneProduct(req, res) {
 }
 
 // GET: Get One Product from Shop
-function getOneProduct(req, res) {
-  let name = req.params.shopName;
+async function getOneProduct(req, res) {
   let id = req.params.productId;
-  Product.findOne({ _id: id }, "-__v")
-    .then(data => {
-      res.status(200).json(data);
-    })
-    .catch(err => {
-      res
-        .status(404)
-        .json({ message: `Could Not Find A Product With Id ${id} at ${name}` });
+  let name = req.params.shopName;
+  try {
+    let product = await Product.findOne({ _id: id });
+    if (product === null) {
+      {
+        res.status(200).json({ message: `No Product Found!` });
+      }
+      res.status(200).json(product);
+    }
+  } catch (error) {
+    res.status(404).json({
+      message: `Could Not Find A Product With Id ${id} at ${name}`,
+      error: error
     });
+  }
 }
 
 // GET: Get All Products
