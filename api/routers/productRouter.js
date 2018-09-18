@@ -1,6 +1,9 @@
 const path = require("path");
 const router = require("express").Router();
-
+const { checkAuth } = require(path.join(
+  __dirname,
+  "../controllers/authController"
+));
 // Import Controller Functions - Products
 const {
   addOneProduct,
@@ -9,12 +12,11 @@ const {
   editOneProduct,
   deleteOneProduct
 } = require(path.join(__dirname, "../controllers/productController"));
-const Product = require(path.join(__dirname, "../db/models/productModel"));
 
 // Add One Product to Shop
 // Only Shop Admin should be able to add
 //Protect
-router.post("/shops/:shopName/products", addOneProduct);
+router.post("/shops/:shopName/products", checkAuth, addOneProduct);
 
 // Get All Products From One Shop
 // Everyone - These queries should be cached [think redis]
@@ -26,10 +28,10 @@ router.get("/shops/:shopName/products/:productId", getOneProduct);
 
 // Edit One Product From One Shop - Ex Name
 // Only For Shop Admin Use
-router.put("/shops/:shopName/products", editOneProduct);
+router.put("/shops/:shopName/products", checkAuth, editOneProduct);
 
 // Delete One Product From One Shop
 // Only For Shop Admin Use
-router.delete("/shops/:shopName/products", deleteOneProduct);
+router.delete("/shops/:shopName/products", checkAuth, deleteOneProduct);
 
 module.exports = router;

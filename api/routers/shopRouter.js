@@ -1,6 +1,11 @@
 const router = require("express").Router();
 const path = require("path");
 
+const { checkAuth, authAddDelete } = require(path.join(
+  __dirname,
+  "../controllers/authController"
+));
+
 // Import Middleware Controller Functions - Shop
 const {
   getAllShops,
@@ -16,14 +21,14 @@ router.get("/shops", getAllShops);
 
 //Add One Shop
 //Admin Only - Returns store id (keep safe) and name
-router.post("/shops", addOneShop);
+router.post("/shops", authAddDelete, addOneShop);
 
 // Edit Something on Shop eg name
 // Admin Only
-router.put("/shops", editOneShop);
+router.put("/shops", checkAuth, editOneShop);
 
 //Delete One Shop
 //Admin Only
-router.delete("/shops", deleteOneShop);
+router.delete("/shops", authAddDelete, deleteOneShop);
 
 module.exports = router;

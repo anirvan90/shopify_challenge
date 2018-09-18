@@ -1,5 +1,9 @@
 const path = require("path");
 const router = require("express").Router();
+const { checkAuth } = require(path.join(
+  __dirname,
+  "../controllers/authController"
+));
 
 // Import Middleware Controller Functions - Orders
 const {
@@ -13,7 +17,7 @@ const {
 
 // Get All Orders From One Shop
 // Admin Only - By ShopId
-router.get("/shops/:shopName/orders", getAllOrders);
+router.get("/shops/:shopName/orders", checkAuth, getAllOrders);
 
 // Create One Order For One Shop
 // Hacky But It Works
@@ -30,6 +34,6 @@ router.put("/shops/:shopName/orders/:orderId");
 
 // Delete One Order For One Shop
 // Should not be open to everyone
-router.delete("/shops/:shopName/orders", deleteOneOrder);
+router.delete("/shops/:shopName/orders", checkAuth, deleteOneOrder);
 
 module.exports = router;

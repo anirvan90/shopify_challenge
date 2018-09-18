@@ -3,6 +3,10 @@ const Shop = require(path.join(__dirname, "../db/models/shopModel"));
 const User = require(path.join(__dirname, "../db/models/userModel"));
 const Joi = require("joi");
 const bcrypt = require("bcryptjs");
+const { isShopOwner } = require(path.join(
+  __dirname,
+  "../controllers/authController"
+));
 
 // Get All Shops - Params None - Return json all shops
 async function getAllShops(req, res) {
@@ -15,11 +19,6 @@ async function addOneShop(req, res) {
   try {
     let apiKey = req.headers["x-api-key"];
     let { name, username, password } = req.body.data;
-    let validUser = await validateUserToCreateShop(username, password, apiKey);
-    if (validUser.status === false) {
-      res.status(401).json({ message: validUser.message });
-      return;
-    }
     validateName(name, res);
     let shop = new Shop({ name: name, ownerKey: apiKey });
     let savedShop = await shop.save();
@@ -37,12 +36,7 @@ async function addOneShop(req, res) {
 
 // Edit Name of Shop - Param Name & ID - Return Success/Fail Message
 async function editOneShop(req, res) {
-  let apiKey = req.headers["x-api-key"];
-  let { oldName, newName, id } = req.body.data;
-  if ((await isShopOwner(apiKey, id)) === false) {
-    res.status(401).json({ message: `Unauthorized Request` });
-    return;
-  }
+  let { oldName, newName } = req.body.data;
   validateName(newName, res);
   let shop = await Shop.findOneAndUpdate({ name: oldName }, { name: newName });
   if (shop) {
@@ -56,13 +50,8 @@ async function editOneShop(req, res) {
 
 // Delete One Shop - Param Id - Return Success/Fail Message
 async function deleteOneShop(req, res) {
-  let apiKey = req.headers["x-api-key"];
-  let { id, name } = req.body.data;
-  if ((await isShopOwner(apiKey, id)) === false) {
-    res.status(401).json({ message: `Unauthorized Request` });
-    return;
-  }
-  let shop = await Shop.findOneAndDelete({ _id: id });
+  let { shopId } = req.body.data;
+  let shop = await Shop.findOneAndDelete({ _id: shopId });
   if (shop) {
     shop.remove();
     res.status(202).json({ message: `You Have Deleted ${shop.name}` });
@@ -87,58 +76,9 @@ function validateName(name, res) {
   });
 }
 
-async function validateUserToCreateShop(username, password, apiKey) {
-  try {
-    let user = await User.findOne({ username: username });
-    if (user) {
-      if (bcrypt.compareSync(password, user.password)) {
-        if (user.apiKey === apiKey) {
-          return { status: true };
-        } else {
-          return { status: false, message: `API Keys Do Not Match` };
-        }
-      } else {
-        return { status: false, message: `Password Does Not Match` };
-      }
-    } else {
-      return { status: false, message: `User Not Found` };
-    }
-  } catch (error) {
-    return { status: false, message: `User Not Found`, error: error };
-  }
-}
-
-async function validateUser(apiKey) {
-  let user = await User.findOne({ apiKey: apiKey });
-  if (user) {
-    return true;
-  }
-  return false;
-}
-
-async function isShopOwner(apiKey, id, name) {
-  let searchObj = {};
-  if (id === null) {
-    searchObj["name"] = name;
-  } else {
-    searchObj["_id"] = id;
-  }
-  if ((await validateUser(apiKey)) === true) {
-    let shop = await Shop.findOne(searchObj);
-    if (shop) {
-      if (shop.ownerKey === apiKey) {
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
 module.exports = {
   getAllShops,
   addOneShop,
   editOneShop,
-  deleteOneShop,
-  isShopOwner,
-  validateUser
+  deleteOneShop
 };

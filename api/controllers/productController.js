@@ -1,18 +1,10 @@
 const path = require("path");
 const Product = require(path.join(__dirname, "../db/models/productModel"));
 const Shop = require(path.join(__dirname, "../db/models/shopModel"));
-const { validateUser, isShopOwner } = require(path.join(
-  __dirname,
-  "../controllers/shopController"
-));
+
 // POST: Add One Product to Shop - Protected
 async function addOneProduct(req, res) {
-  let apiKey = req.headers["x-api-key"];
   let { shopId, name, sellPrice, inventory, tags } = req.body.data;
-  if ((await isShopOwner(apiKey, shopId)) === false) {
-    res.status(401).json({ message: `Unauthorized Request` });
-    return;
-  }
   let newProd = new Product({
     name: name,
     sellPrice: sellPrice,
@@ -69,12 +61,7 @@ async function getAllProducts(req, res) {
 
 // PUT: Edit One Product - Protected
 async function editOneProduct(req, res) {
-  let { productId, shopId, name } = req.body.data;
-  let apiKey = req.headers["x-api-key"];
-  if ((await isShopOwner(apiKey, shopId)) === false) {
-    res.status(401).json({ message: `Unauthorized Request` });
-    return;
-  }
+  let { productId, name } = req.body.data;
   try {
     let updatedProduct = await Product.findOneAndUpdate(
       { _id: productId },
@@ -91,18 +78,13 @@ async function editOneProduct(req, res) {
 
 // DELETE: Delete One Product - Protected
 async function deleteOneProduct(req, res) {
-  let { productId, shopId } = req.body.data;
-  let apiKey = req.headers["x-api-key"];
-  if ((await isShopOwner(apiKey, shopId)) === false) {
-    res.status(401).json({ message: `Unauthorized Request` });
-    return;
-  }
+  let { productId } = req.body.data;
   try {
     let prodToDelete = await Product.findOneAndDelete({ _id: productId });
     prodToDelete.remove();
     res.status(202).json({ message: `You Have Deleted ${prodToDelete.name}` });
   } catch (error) {
-    res.status(404).json({ message: `Something Went Wrong!` });
+    res.status(404).json({ message: `Something Went Wrong!`, error: error });
   }
 }
 
