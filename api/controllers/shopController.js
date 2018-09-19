@@ -10,10 +10,16 @@ async function getAllShops(req, res) {
 
 // Add One Shop - Param Name - Return Success/Fail Message
 async function addOneShop(req, res) {
+  let apiKey = req.headers["x-api-key"];
+  let { name } = req.body.data;
+  let result = validateName(name, res);
+  if (result.error !== null) {
+    res.status(401).json({
+      message: `Shop Name Must Be Between 5 & 12 AlphaNumeric Characters`
+    });
+    return;
+  }
   try {
-    let apiKey = req.headers["x-api-key"];
-    let { name, username, password } = req.body.data;
-    validateName(name, res);
     let shop = new Shop({ name: name, ownerKey: apiKey });
     let savedShop = await shop.save();
     if (savedShop) {
@@ -31,7 +37,13 @@ async function addOneShop(req, res) {
 // Edit Name of Shop - Param Name & ID - Return Success/Fail Message
 async function editOneShop(req, res) {
   let { oldName, newName } = req.body.data;
-  validateName(newName, res);
+  let result = validateName(newName, res);
+  if (result.error !== null) {
+    res.status(401).json({
+      message: `Shop Name Must Be Between 5 & 12 AlphaNumeric Characters`
+    });
+    return;
+  }
   let shop = await Shop.findOneAndUpdate({ name: oldName }, { name: newName });
   if (shop) {
     res
@@ -55,19 +67,14 @@ async function deleteOneShop(req, res) {
 }
 
 // Shop Name Validation Helper Function - This needs to be fixed
-function validateName(name, res) {
+function validateName(name) {
   const schema = Joi.string()
     .alphanum()
     .min(5)
     .max(12)
     .required();
-  return Joi.validate(name, schema, (err, val) => {
-    if (err) {
-      res.status(501).json({
-        message: `Shop Name Must Be between 3 and 12 characters and alphanumeric`
-      });
-    }
-  });
+  const result = Joi.validate(name, schema);
+  return result;
 }
 
 module.exports = {
