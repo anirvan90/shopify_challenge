@@ -18,6 +18,11 @@ const app = express();
 app.use(helmet());
 app.use(bodyParser.json());
 
+//Delete This - Testing Docker
+app.get("/", (req, res) => {
+  res.send("IM ALIVE!!");
+});
+
 // Routers - Authentication Logic
 app.use("/api/v1", authRouter);
 

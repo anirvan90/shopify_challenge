@@ -1,8 +1,8 @@
 const path = require("path");
-const db = require(path.join(__dirname, "./api/db/index"));
-const Product = require(path.join(__dirname, "./api/db/models/productModel"));
-const Order = require(path.join(__dirname, "./api/db/models/orderModel"));
-const Shop = require(path.join(__dirname, "./api/db/models/shopModel"));
+require(path.join(__dirname, "./api/config/database"));
+const Product = require(path.join(__dirname, "./api/models/productModel"));
+const Order = require(path.join(__dirname, "./api/models/orderModel"));
+const Shop = require(path.join(__dirname, "./api/models/shopModel"));
 
 const t1 = new Shop({
   name: "t1"
