@@ -1,6 +1,6 @@
 const path = require("path");
-const Product = require(path.join(__dirname, "../db/models/productModel"));
-const Shop = require(path.join(__dirname, "../db/models/shopModel"));
+const Product = require(path.join(__dirname, "../models/productModel"));
+const Shop = require(path.join(__dirname, "../models/shopModel"));
 
 // POST: Add One Product to Shop - Protected
 async function addOneProduct(req, res) {

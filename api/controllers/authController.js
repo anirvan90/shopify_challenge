@@ -1,7 +1,7 @@
 const path = require("path");
-const User = require(path.join(__dirname, "../db/models/userModel"));
+const User = require(path.join(__dirname, "../models/userModel"));
 const bcrypt = require("bcryptjs");
-const Shop = require(path.join(__dirname, "../db/models/shopModel"));
+const Shop = require(path.join(__dirname, "../models/shopModel"));
 
 function register(req, res) {
   const { username, password } = req.body.data;

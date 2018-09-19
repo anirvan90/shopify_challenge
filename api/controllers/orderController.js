@@ -1,6 +1,6 @@
 const path = require("path");
-const Shop = require(path.join(__dirname, "../db/models/shopModel"));
-const Order = require(path.join(__dirname, "../db/models/orderModel"));
+const Shop = require(path.join(__dirname, "../models/shopModel"));
+const Order = require(path.join(__dirname, "../models/orderModel"));
 const { isShopOwner } = require(path.join(
   __dirname,
   "../controllers/authController.js"

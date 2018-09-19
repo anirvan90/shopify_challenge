@@ -6,6 +6,7 @@ const productRouter = require(path.join(__dirname, "./routers/productRouter"));
 const orderRouter = require(path.join(__dirname, "./routers/orderRouter"));
 const shopRouter = require(path.join(__dirname, "./routers/shopRouter"));
 const authRouter = require(path.join(__dirname, "./routers/authRouter"));
+require(path.join(__dirname, "./config/database"));
 require("./config/config")();
 
 // Declare Port to serve application

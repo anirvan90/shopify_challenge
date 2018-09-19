@@ -1,5 +1,7 @@
+// module.exports = {
+//   url: "mongodb://mongo:27017"
+// };
 const mongoose = require("mongoose");
-const path = require("path");
 mongoose.connect("mongodb://localhost:27017/fluffykins");
 
 const db = mongoose.connection;

@@ -1,5 +1,5 @@
 const path = require("path");
-const Shop = require(path.join(__dirname, "../db/models/shopModel"));
+const Shop = require(path.join(__dirname, "../models/shopModel"));
 const Joi = require("joi");
 
 // Get All Shops - Params None - Return json all shops
