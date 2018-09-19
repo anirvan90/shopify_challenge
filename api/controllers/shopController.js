@@ -66,7 +66,7 @@ async function deleteOneShop(req, res) {
   }
 }
 
-// Shop Name Validation Helper Function - This needs to be fixed
+// Shop Name Validation Helper Function
 function validateName(name) {
   const schema = Joi.string()
     .alphanum()
