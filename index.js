@@ -36,10 +36,6 @@ app.use((req, res) => {
   res.status(400).json({ message: "Not Implemented" });
 });
 
-// process.on("uncaughtException", function(err) {
-//   console.error("global exception:", err.message);
-// });
-
 // Serve Application
 app.listen(PORT, () => {
   console.log(`App is listening on Port:${PORT}`);
