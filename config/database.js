@@ -8,7 +8,7 @@ mongoose.connect("mongodb://mongo:27017/fluffykins");
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "MongoDB Connection Error:.."));
 db.once("open", () => {
-  console.log(`MongoDB ${process.env.MONGO_URL} is now connected`);
+  console.log(`MongoDB is now connected`);
 });
 
 module.exports = db;
