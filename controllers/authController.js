@@ -11,28 +11,20 @@ async function register(req, res) {
   }
   let user = await User.findOne({ username });
   if (!user) {
-    bcrypt.hash(password, 10, (err, hashed) => {
-      if (err) res.send("Error");
-      let newUser = new User({
-        username: username,
-        password: hashed,
-        apiKey: bcrypt.hashSync(process.env.AUTH_SECRET, 10)
-      });
-      newUser
-        .save()
-        .then(data => {
-          res.status(201).json({
-            apiKey: data.apiKey,
-            username: data.username,
-            message: `KEEP YOUR KEYS TO YOUR CHEST. SEND THEM WITH IN YOUR REQUEST HEADERS`
-          });
-        })
-        .catch(err => {
-          res
-            .status(501)
-            .json({ message: "Error In Registration. Try Again!" });
-        });
+    let newUser = new User({
+      username: username,
+      password: password
     });
+    let savedUser = await newUser.save();
+    if (savedUser) {
+      res.status(201).json({
+        apiKey: savedUser.apiKey,
+        username: savedUser.username,
+        message: `KEEP YOUR KEYS TO YOUR CHEST. SEND THEM IN x-api-key HEADERS`
+      });
+    } else {
+      res.status(501).json({ message: "Error In Registration. Try Again!" });
+    }
   } else {
     res.status(400).json({ message: "Username is taken" });
   }
