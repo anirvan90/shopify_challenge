@@ -3,41 +3,46 @@ const User = require(path.join(__dirname, "../models/userModel"));
 const bcrypt = require("bcryptjs");
 const Shop = require(path.join(__dirname, "../models/shopModel"));
 
-function register(req, res) {
-  const { username, password } = req.body.data;
-  User.findOne({ username }).then(user => {
-    if (!user) {
-      bcrypt.hash(password, 10, (err, hashed) => {
-        if (err) res.send("Error");
-        let newUser = new User({
-          username: username,
-          password: hashed,
-          apiKey: bcrypt.hashSync(process.env.AUTH_SECRET, 10)
-        });
-        newUser
-          .save()
-          .then(data => {
-            res.status(201).json({
-              apiKey: data.apiKey,
-              username: data.username,
-              message: `KEEP YOUR KEYS TO YOUR CHEST. SEND THEM WITH IN YOUR REQUEST HEADERS`
-            });
-          })
-          .catch(err => {
-            res.status(501).json({ message: "error in saving" });
-          });
+async function register(req, res) {
+  const { username, password } = req.body;
+  if (username === undefined || password === undefined) {
+    res.status(501).json({ message: "Check Username & Password" });
+    return;
+  }
+  let user = await User.findOne({ username });
+  if (!user) {
+    bcrypt.hash(password, 10, (err, hashed) => {
+      if (err) res.send("Error");
+      let newUser = new User({
+        username: username,
+        password: hashed,
+        apiKey: bcrypt.hashSync(process.env.AUTH_SECRET, 10)
       });
-    } else {
-      res.status(400).json({ message: "Username is taken" });
-    }
-  });
+      newUser
+        .save()
+        .then(data => {
+          res.status(201).json({
+            apiKey: data.apiKey,
+            username: data.username,
+            message: `KEEP YOUR KEYS TO YOUR CHEST. SEND THEM WITH IN YOUR REQUEST HEADERS`
+          });
+        })
+        .catch(err => {
+          res
+            .status(501)
+            .json({ message: "Error In Registration. Try Again!" });
+        });
+    });
+  } else {
+    res.status(400).json({ message: "Username is taken" });
+  }
 }
 async function checkAuth(req, res, next) {
   let apiKey = req.headers["x-api-key"];
   if (isEmpty(req.body)) {
     id = null;
   } else {
-    id = req.body.data.shopId;
+    id = req.body.shopId;
   }
   let name = req.params.shopName;
   if ((await isShopOwner(apiKey, id, name)) === false) {
@@ -74,7 +79,11 @@ async function isShopOwner(apiKey, id, name) {
 }
 
 async function authAddDelete(req, res, next) {
-  let { username, password } = req.body.data;
+  let { username, password } = req.body;
+  if (username === undefined || password === undefined) {
+    res.status(501).json({ message: "Check Username & Password" });
+    return;
+  }
   let apiKey = req.headers["x-api-key"];
   let result = await validateUserToCreateShop(username, password, apiKey);
   if (result.status === true) {

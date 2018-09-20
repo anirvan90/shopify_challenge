@@ -31,7 +31,7 @@ app.use("/api/v1", productRouter);
 app.use("/api/v1", orderRouter);
 app.use("/api/v1", shopRouter);
 
-// Redirect Unimplmented Routes
+// Redirect Unimplmented Routes & Errors
 app.use((req, res) => {
   res.status(400).json({ message: "Not Implemented" });
 });

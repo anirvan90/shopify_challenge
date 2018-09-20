@@ -6,6 +6,6 @@ const { register, checkAuth } = require(path.join(
 ));
 
 router.post("/register", register);
-router.post("/checkAuth", checkAuth);
+// router.post("/checkAuth", checkAuth);
 
 module.exports = router;

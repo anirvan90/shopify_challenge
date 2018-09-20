@@ -1,10 +1,6 @@
 const path = require("path");
 const Shop = require(path.join(__dirname, "../models/shopModel"));
 const Order = require(path.join(__dirname, "../models/orderModel"));
-const { isShopOwner } = require(path.join(
-  __dirname,
-  "../controllers/authController.js"
-));
 
 // GET: Get all orders - Protected
 async function getAllOrders(req, res) {
@@ -23,7 +19,11 @@ async function getAllOrders(req, res) {
 
 // POST: Add a new order
 async function addOneOrder(req, res) {
-  let productIds = req.body.data.productIds;
+  let productIds = req.body.productIds;
+  if (productIds === undefined) {
+    res.status(501).json({ message: `Please Enter Product ID's` });
+    return;
+  }
   let name = req.params.shopName;
   let shop = await Shop.findOne({ name: name });
   let order = new Order({
@@ -54,7 +54,11 @@ async function getOneOrder(req, res) {
 
 // DELETE: Delete one order - Protected
 async function deleteOneOrder(req, res) {
-  let orderId = req.body.data.orderId;
+  let orderId = req.body.orderId;
+  if (orderId === undefined) {
+    res.status(501).json({ message: `Enter An Order Id` });
+    return;
+  }
   let order = await Order.findOneAndDelete({ _id: orderId });
   if (order === null) {
     res.status(404).json({

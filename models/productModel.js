@@ -48,7 +48,6 @@ productSchema.pre("save", function(next) {
       { $push: { products: product } },
       (err, data) => {
         if (err) console.log(err);
-        console.log("saved");
       }
     );
 

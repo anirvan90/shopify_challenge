@@ -4,7 +4,7 @@ const Shop = require(path.join(__dirname, "../models/shopModel"));
 
 // POST: Add One Product to Shop - Protected
 async function addOneProduct(req, res) {
-  let { shopId, name, sellPrice, inventory, tags } = req.body.data;
+  let { shopId, name, sellPrice, inventory, tags } = req.body;
   let newProd = new Product({
     name: name,
     sellPrice: sellPrice,
@@ -61,7 +61,7 @@ async function getAllProducts(req, res) {
 
 // PUT: Edit One Product - Protected
 async function editOneProduct(req, res) {
-  let { productId, name } = req.body.data;
+  let { productId, name } = req.body;
   try {
     let updatedProduct = await Product.findOneAndUpdate(
       { _id: productId },
@@ -78,7 +78,7 @@ async function editOneProduct(req, res) {
 
 // DELETE: Delete One Product - Protected
 async function deleteOneProduct(req, res) {
-  let { productId } = req.body.data;
+  let { productId } = req.body;
   try {
     let prodToDelete = await Product.findOneAndDelete({ _id: productId });
     prodToDelete.remove();

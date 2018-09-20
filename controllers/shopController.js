@@ -11,7 +11,7 @@ async function getAllShops(req, res) {
 // Add One Shop - Param Name - Return Success/Fail Message
 async function addOneShop(req, res) {
   let apiKey = req.headers["x-api-key"];
-  let { name } = req.body.data;
+  let { name } = req.body;
   let result = validateName(name, res);
   if (result.error !== null) {
     res.status(401).json({
@@ -36,7 +36,7 @@ async function addOneShop(req, res) {
 
 // Edit Name of Shop - Param Name & ID - Return Success/Fail Message
 async function editOneShop(req, res) {
-  let { oldName, newName } = req.body.data;
+  let { oldName, newName } = req.body;
   let result = validateName(newName, res);
   if (result.error !== null) {
     res.status(401).json({
@@ -56,7 +56,7 @@ async function editOneShop(req, res) {
 
 // Delete One Shop - Param Id - Return Success/Fail Message
 async function deleteOneShop(req, res) {
-  let { shopId } = req.body.data;
+  let { shopId } = req.body;
   let shop = await Shop.findOneAndDelete({ _id: shopId });
   if (shop) {
     shop.remove();
