@@ -9,7 +9,6 @@ services:
     links:
       - mongo
   mongo:
-    container_name: mongo
     image: mongo
     volumes:
       - ./data:/data/db

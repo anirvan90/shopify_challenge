@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
 const helmet = require("helmet");
+const mongoose = require("mongoose");
 const productRouter = require(path.join(__dirname, "./routers/productRouter"));
 const orderRouter = require(path.join(__dirname, "./routers/orderRouter"));
 const shopRouter = require(path.join(__dirname, "./routers/shopRouter"));
@@ -19,9 +20,10 @@ app.use(helmet());
 app.use(bodyParser.json());
 
 //Delete This - Testing Docker
-app.get("/", (req, res) => {
-  res.send("IM ALIVE!!");
-});
+// app.get("/", (req, res) => {
+//   console.log("console work!!");
+//   res.send("IM ALIVE!!");
+// });
 
 // Routers - Authentication Logic
 app.use("/api/v1", authRouter);
