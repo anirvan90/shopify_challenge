@@ -19,7 +19,7 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: false
   },
-  image_link: {
+  imageLink: {
     type: String,
     required: false
   },
