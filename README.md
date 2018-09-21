@@ -131,3 +131,5 @@ Each model has its own set of controller functions for CRUD interactions with th
 #### Routers
 
 To separate the logic for each model, each model has its own router. Refer to API documentation for route definitions, open routes and protected routes.
+
+https://documenter.getpostman.com/view/1615700/RWaPs5ok

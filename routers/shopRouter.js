@@ -25,7 +25,7 @@ router.post("/shops", authAddDelete, addOneShop);
 
 // Edit Something on Shop eg name
 // Admin Only
-router.put("/shops", checkAuth, editOneShop);
+router.put("/shops/:shopName", checkAuth, editOneShop);
 
 //Delete One Shop
 //Admin Only
