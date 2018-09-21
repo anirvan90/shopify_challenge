@@ -20,7 +20,8 @@ app.use(bodyParser.json());
 
 //Default Landing
 app.get("/", (req, res) => {
-  res.send(`HEY THERE! You Should Really Be Going to /api/v1/shops`);
+  res.redirect("https://documenter.getpostman.com/view/1615700/RWaPs5ok");
+  // res.send(`HEY THERE! You Should Really Be Going to /api/v1/shops`);
 });
 
 // Routers - Authentication Logic
