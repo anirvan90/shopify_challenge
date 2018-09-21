@@ -23,7 +23,8 @@ Start a MongoDB daemon in the background by running `mongod` or `sudo mongod` de
 
   
 
-With Mongo running in the background you can choose to seed the database by running `node seed.js` from the root of the application. Start the app by running `npm start`. The app will serve on `localhost:3000`
+With Mongo running in the background you can choose to seed the database by running `node seed.js` from the root of the application. Start the app by running `npm start`. The app will serve on `localhost:3000`. 
+`localhost:3000/` will redirect to the api documentation.
 
   
 
